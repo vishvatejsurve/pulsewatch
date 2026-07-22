@@ -1,8 +1,6 @@
 package com.pulsewatch.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -11,8 +9,13 @@ public class Event {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Enumerated(EnumType.STRING)
     private EventType eventType;
+
+    @Enumerated(EnumType.STRING)
     private String serviceName;
+    
     private EventStatus status;
     private Integer responseTime;
     private LocalDateTime createdAt;
