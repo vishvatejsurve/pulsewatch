@@ -8,6 +8,7 @@ import com.pulsewatch.entity.EventStatus;
 import com.pulsewatch.exception.EventNotFoundException;
 import com.pulsewatch.mapper.EventMapper;
 import com.pulsewatch.repository.EventRepository;
+import com.pulsewatch.websocket.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,14 +23,18 @@ import java.util.Optional;
 public class EventServiceImplementation implements EventService {
     private final EventRepository repository;
     private final EventMapper eventMapper;
+    private final EventPublisher eventPublisher;
 
     @Override
     public EventResponseDTO createEvent(EventRequestDTO requestDTO) {
         Event event = eventMapper.toEntity(requestDTO);
 
         Event savedEvent = repository.save(event);
+        log.info("Event saved successfully {}",savedEvent.getId());
 
-        return eventMapper.toResponseDTO(savedEvent);
+       EventResponseDTO responseDTO= eventMapper.toResponseDTO(savedEvent);
+       eventPublisher.publish(responseDTO);
+        return  responseDTO;
     }
 
     @Override
