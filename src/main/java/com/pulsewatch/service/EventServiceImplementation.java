@@ -11,6 +11,8 @@ import com.pulsewatch.repository.EventRepository;
 import com.pulsewatch.websocket.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +28,7 @@ public class EventServiceImplementation implements EventService {
     private final EventPublisher eventPublisher;
 
     @Override
+    @CacheEvict(value = "dashboard",allEntries = true)
     public EventResponseDTO createEvent(EventRequestDTO requestDTO) {
         Event event = eventMapper.toEntity(requestDTO);
 
@@ -51,14 +54,4 @@ public class EventServiceImplementation implements EventService {
         return eventMapper.toResponseDTO(fetchedEvent);
     }
 
-    @Override
-    public DashboardResponseDTO getDashboard() {
-        DashboardResponseDTO dashboard=new DashboardResponseDTO();
-        dashboard.setTotalEvents(repository.count());
-        dashboard.setSuccessEvents(repository.countByStatus(EventStatus.SUCCESS));
-        dashboard.setFailedEvents(repository.countByStatus(EventStatus.FAILED));
-        dashboard.setAverageResponseTime(repository.getAverageResponseTime());
-
-        return  dashboard;
-    }
 }

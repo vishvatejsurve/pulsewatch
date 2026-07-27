@@ -12,5 +12,4 @@ public interface EventService {
     List<EventResponseDTO> getAllEvents();
     EventResponseDTO getEventById(Long id);
 
-    DashboardResponseDTO getDashboard();
 }

@@ -35,9 +35,5 @@ public class EventController {
     {
         return ResponseEntity.ok(eventService.getEventById(id));
     }
-    @GetMapping("/dashboard")
-    public ResponseEntity<DashboardResponseDTO> getDashboard()
-    {
-        return ResponseEntity.ok(eventService.getDashboard());
-    }
+
 }
