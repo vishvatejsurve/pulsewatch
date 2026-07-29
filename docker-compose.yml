@@ -1,0 +1,45 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: pulsewatch-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Pass@123
+      MYSQL_DATABASE: pulsewatch
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pulsewatch-net
+
+  redis:
+    image: redis:7
+    container_name: pulsewatch-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - pulsewatch-net
+
+  app:
+    build: .
+    container_name: pulsewatch-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pulsewatch
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Pass@123
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: "6379"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - pulsewatch-net
+
+networks:
+  pulsewatch-net:
+    driver: bridge
